@@ -1,20 +1,18 @@
 /*
- * This code was originally implemented for: "q-state Potts model metastability
+ * Tiny Ising model.
+ * Loosely based on  "q-state Potts model metastability
  * study using optimized GPU-based Monte Carlo algorithms",
  * Ezequiel E. Ferrero, Juan Pablo De Francesco, Nicolás Wolovick,
  * Sergio A. Cannas
  * http://arxiv.org/abs/1101.0876
  */
 
-#include <stddef.h> // NULL, size_t
 #include <stdlib.h> // rand()
 #include <math.h> // expf()
 #include <stdio.h> // printf()
 #include <time.h> // time()
-#include <sys/time.h> // gettimeofday()
 #include <assert.h>
 #include <limits.h> // UINT_MAX
-#include <string.h> // memset()
 #include <omp.h> // omp_get_wtime()
 
 #ifndef L
@@ -51,7 +49,6 @@
 
 // Functions
 
-
 // Internal definitions and functions
 // out vector size, it is +1 since we reach TEMP_
 #define NPOINTS (1+(int)((TEMP_MAX-TEMP_MIN)/DELTA_TEMP))
@@ -66,7 +63,8 @@ struct statpoint {
 	double m; double m2; double m4;
 };
 
-// The grid: global array.
+
+// The grid: global array
 static int grid[L][L] = {{0}};
 
 
@@ -115,7 +113,7 @@ update(const float temp,
 static
 double
 calculate(int grid[L][L],
-		  unsigned int *M_max) {
+	  unsigned int *M_max) {
 
 	unsigned int E = 0;
 	unsigned int M[2] = {0};
@@ -157,7 +155,8 @@ cycle(int grid[L][L],
 	assert((0<step && min<=max) || (step<0 && max<=min));
 	modifier = (0<step)?1:-1;
 
-	for (index=0, temp=min; modifier*temp<=modifier*max;
+	for (index=0, temp=min;
+	     modifier*temp<=modifier*max;
 	     ++index, temp+=step) {
 
 		// equilibrium phase

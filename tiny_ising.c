@@ -5,6 +5,8 @@
  * Ezequiel E. Ferrero, Juan Pablo De Francesco, Nicolás Wolovick,
  * Sergio A. Cannas
  * http://arxiv.org/abs/1101.0876
+ * 
+ * Debugging: Ezequiel Ferrero
  */
 
 #include <stdlib.h> // rand()
@@ -86,7 +88,6 @@ update(const float temp,
 			int spin_neigh_s = 0, spin_neigh_w = 0;
 
 			int spin_old = grid[i][j];
-//			int spin_new = 1-spin_old;
 			int spin_new = (-1)*spin_old;
 
 			// computing h_before
@@ -94,14 +95,10 @@ update(const float temp,
 			spin_neigh_e = grid[i]        [(j+1)%L];
 			spin_neigh_w = grid[i]        [(j+L-1)%L];
 			spin_neigh_s = grid[(i+1)%L]  [j];
-//			h_before = - (spin_old==spin_neigh_n) - (spin_old==spin_neigh_e)
-//				   - (spin_old==spin_neigh_w) - (spin_old==spin_neigh_s);
 			h_before = - (spin_old*spin_neigh_n) - (spin_old*spin_neigh_e)
 				   - (spin_old*spin_neigh_w) - (spin_old*spin_neigh_s);
 
 			// h after taking new spin
-//			h_after = - (spin_new==spin_neigh_n) - (spin_new==spin_neigh_e)
-//				  - (spin_new==spin_neigh_w) - (spin_new==spin_neigh_s);
 			h_after = - (spin_new*spin_neigh_n) - (spin_new*spin_neigh_e)
 				  - (spin_new*spin_neigh_w) - (spin_new*spin_neigh_s);
 
@@ -124,7 +121,6 @@ calculate(int grid[L][L],
 	  int *M_max) {
 
 	unsigned int E = 0;
-	unsigned int M[2] = {0};
 
 	int spin;
 	int spin_neigh_n, spin_neigh_e, spin_neigh_s, spin_neigh_w;
@@ -137,16 +133,11 @@ calculate(int grid[L][L],
 			spin_neigh_w = grid[i]        [(j+L-1)%L];
 			spin_neigh_s = grid[(i+L-1)%L][j];
 
-//			E += (spin==spin_neigh_n)+(spin==spin_neigh_e)+(spin==spin_neigh_w)+(spin==spin_neigh_s);
 			E += (spin*spin_neigh_n)+(spin*spin_neigh_e)+(spin*spin_neigh_w)+(spin*spin_neigh_s);
-//			M[spin] += 1;
 			*M_max += spin;
 		}
 	}
 
-	// compute maximum magnetization
-//	*M_max = M[0]>M[1] ? M[0] : M[1];
-	// return energy
 	return -((double)E/2.0);
 }
 
@@ -181,10 +172,8 @@ cycle(int grid[L][L],
 			update(temp, grid);
 			if (j%calc_step==0) {
 				double energy = 0.0, mag = 0.0;
-//				unsigned int M_max = 0;
 				int M_max = 0;
 				energy = calculate(grid, &M_max);
-//				mag = 2.0*M_max/N - 1;
 				mag = abs(M_max)/(float)N;
 				e  += energy;
 				e2 += energy*energy;
@@ -210,10 +199,9 @@ cycle(int grid[L][L],
 static
 void
 sample(int grid[L][L], struct statpoint stat[]) {
-	// clear the gird
+	// clear the grid
 	for (unsigned int i=0; i<L; ++i) {
 		for (unsigned int j=0; j<L; ++j) {
-//			grid[i][j] = 0;
 			grid[i][j] = 1;
 		}
 	}

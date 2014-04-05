@@ -1,8 +1,5 @@
-# Binary file
-BIN			= tiny_ising
-
-# Flags
-CFLAGS			= -std=gnu99 -Wall -Wextra
+CC			= gcc
+CFLAGS			= -std=gnu99 -Wall -Wextra -O2 -march=native
 LDFLAGS			= -lm -lgomp
 
 # Default Values
@@ -20,26 +17,25 @@ OFILE			= [CPU,$(Q),$(L),$(SAMPLES),$(TEMP_MIN),$(TEMP_MAX),$(DELTA_TEMP),$(TRAN
 PARAMETERS		= -DQ=$(Q) -DL=$(L) -DSAMPLES=$(SAMPLES) \
 			  -DTEMP_MIN=$(TEMP_MIN) -DTEMP_MAX=$(TEMP_MAX) -DDELTA_TEMP=$(DELTA_TEMP) \
 			  -DTRAN=$(TRAN) -DTMAX=$(TMAX) -DDELTA_T=$(DELTA_T)
-
-# Compilers
-CC			= gcc
-LINKER			= gcc
+CPPFLAGS = $(PARAMETERS)
 
 # Files
-C_SOURCES		= $(BIN).c
-HEADERS			=
-C_OBJS			= $(patsubst %.c, %.o, $(C_SOURCES))
+TARGETS		= tiny_ising tiny_ising_rb 
+SOURCES		= $(shell echo *.c)
+OBJS		= $(patsubst %.c, %.o, $(C_SOURCES))
 
 
 # Rules
-$(BIN): clean $(C_OBJS) $(HEADERS)
-	$(LINKER) -o $(BIN) $(C_OBJS) $(LDFLAGS) $(INCLUDES) $(LIBS)
+all: $(TARGETS)
 
-$(C_OBJS): $(C_SOURCES) $(HEADERS)
-	$(CC) -c $(C_SOURCES) $(CFLAGS) $(INCLUDES) $(PARAMETERS)
+tiny_ising: tiny_ising.o
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-run: $(BIN)
-	./$(BIN) > $(OFILE) &
+tiny_ising_rb: tiny_ising_rb.o
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:
-	rm -f $(BIN) *.o
+	rm -f $(TARGETS) *.o
+
+.PHONY: clean all
+

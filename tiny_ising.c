@@ -120,7 +120,7 @@ double
 calculate(int grid[L][L],
 	  int *M_max) {
 
-	unsigned int E = 0;
+	int E = 0;
 
 	int spin;
 	int spin_neigh_n, spin_neigh_e, spin_neigh_s, spin_neigh_w;

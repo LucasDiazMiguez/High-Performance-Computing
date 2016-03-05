@@ -1,5 +1,5 @@
 CC			= gcc
-CFLAGS			= -std=gnu99 -Wall -Wextra -O2 -march=native
+CFLAGS			= -std=gnu99 -Wall -Wextra
 LDFLAGS			= -lm -lgomp
 
 # Default Values

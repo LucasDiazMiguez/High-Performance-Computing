@@ -1,17 +1,8 @@
+include settings.inc
+
 CC			= gcc
 CFLAGS			= -std=gnu99 -Wall -Wextra
 LDFLAGS			= -lm -lgomp
-
-# Default Values
-L			= 128
-SAMPLES			= 1
-TEMP_MIN		= 2.1f
-TEMP_MAX		= 2.5f
-DELTA_TEMP		= 0.05f
-TRAN			= 20
-TMAX			= 800
-DELTA_T			= 5
-OFILE			= [CPU,$(Q),$(L),$(SAMPLES),$(TEMP_MIN),$(TEMP_MAX),$(DELTA_TEMP),$(TRAN),$(TMAX),$(DELTA_T)].dat
 
 # Simulation Parameters
 PARAMETERS		= -DQ=$(Q) -DL=$(L) -DSAMPLES=$(SAMPLES) \
@@ -20,7 +11,7 @@ PARAMETERS		= -DQ=$(Q) -DL=$(L) -DSAMPLES=$(SAMPLES) \
 CPPFLAGS = $(PARAMETERS)
 
 # Files
-TARGETS		= tiny_ising tiny_ising_rb 
+TARGETS		= tiny_ising
 SOURCES		= $(shell echo *.c)
 OBJS		= $(patsubst %.c, %.o, $(C_SOURCES))
 
@@ -29,9 +20,6 @@ OBJS		= $(patsubst %.c, %.o, $(C_SOURCES))
 all: $(TARGETS)
 
 tiny_ising: tiny_ising.o
-	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
-
-tiny_ising_rb: tiny_ising_rb.o
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:

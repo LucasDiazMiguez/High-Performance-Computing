@@ -77,28 +77,22 @@ update(const float temp,
 	// typewriter update
 	for (unsigned int i=0; i<L; ++i) {
 		for (unsigned int j=0; j<L; ++j) {
-
-			int h_before = 0, h_after = 0, delta_E = 0;
-			int spin_neigh_n = 0, spin_neigh_e = 0;
-			int spin_neigh_s = 0, spin_neigh_w = 0;
-
 			int spin_old = grid[i][j];
 			int spin_new = (-1)*spin_old;
 
 			// computing h_before
-			spin_neigh_n = grid[(i+L-1)%L][j];
-			spin_neigh_e = grid[i]        [(j+1)%L];
-			spin_neigh_w = grid[i]        [(j+L-1)%L];
-			spin_neigh_s = grid[(i+1)%L]  [j];
-			h_before = - (spin_old*spin_neigh_n) - (spin_old*spin_neigh_e)
+			int spin_neigh_n = grid[(i+L-1)%L][j];
+			int spin_neigh_e = grid[i]        [(j+1)%L];
+			int spin_neigh_w = grid[i]        [(j+L-1)%L];
+			int spin_neigh_s = grid[(i+1)%L]  [j];
+			int h_before = - (spin_old*spin_neigh_n) - (spin_old*spin_neigh_e)
 				   - (spin_old*spin_neigh_w) - (spin_old*spin_neigh_s);
 
 			// h after taking new spin
-			h_after = - (spin_new*spin_neigh_n) - (spin_new*spin_neigh_e)
+			int h_after = - (spin_new*spin_neigh_n) - (spin_new*spin_neigh_e)
 				  - (spin_new*spin_neigh_w) - (spin_new*spin_neigh_s);
 
-
-			delta_E = h_after - h_before;
+			int delta_E = h_after - h_before;
 			float p = rand()/(float)RAND_MAX;
 			if (delta_E<=0 || p<=expf(-delta_E/temp)) {
 				grid[i][j] = spin_new;
@@ -114,17 +108,13 @@ calculate(int grid[L][L],
 	  int *M_max) {
 
 	int E = 0;
-
-	int spin;
-	int spin_neigh_n, spin_neigh_e, spin_neigh_s, spin_neigh_w;
-
 	for (unsigned int i=0; i<L; ++i) {
 		for (unsigned int j=0; j<L; ++j) {
-			spin = grid[i][j];
-			spin_neigh_n = grid[(i+1)%L]  [j];
-			spin_neigh_e = grid[i]        [(j+1)%L];
-			spin_neigh_w = grid[i]        [(j+L-1)%L];
-			spin_neigh_s = grid[(i+L-1)%L][j];
+			int spin = grid[i][j];
+			int spin_neigh_n = grid[(i+1)%L]  [j];
+			int spin_neigh_e = grid[i]        [(j+1)%L];
+			int spin_neigh_w = grid[i]        [(j+L-1)%L];
+			int spin_neigh_s = grid[(i+L-1)%L][j];
 
 			E += (spin*spin_neigh_n)+(spin*spin_neigh_e)+(spin*spin_neigh_w)+(spin*spin_neigh_s);
 			*M_max += spin;
@@ -141,16 +131,12 @@ cycle(int grid[L][L],
       const double step, const unsigned int calc_step,
       struct statpoint stats[]) {
 
-	unsigned int index = 0;
-	int modifier = 0;
-	double temp = 0.0;
-
 	assert((0<step && min<=max) || (step<0 && max<=min));
-	modifier = (0<step)?1:-1;
+	int modifier = (0<step)?1:-1;
 
-	for (index=0, temp=min;
-	     modifier*temp<=modifier*max;
-	     ++index, temp+=step) {
+	unsigned int index = 0;
+	for (double temp=min; modifier*temp<=modifier*max; temp+=step) {
+		printf("Temp: %f\n", temp);
 
 		// equilibrium phase
 		for (unsigned int j=0; j<TRAN; ++j) {

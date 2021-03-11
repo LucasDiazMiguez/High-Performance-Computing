@@ -17,6 +17,11 @@
 #include <limits.h> // UINT_MAX
 #include <omp.h> // omp_get_wtime()
 
+#ifdef GRAPHICS
+#include <string.h>
+#include "colormap.h"
+#include "gl2d.h"
+#endif /* GRAPHICS */
 
 #ifndef L
 #define L 384 // linear system size
@@ -65,10 +70,47 @@ struct statpoint {
 static int grid[L][L] = {{0}};
 
 
-/***
- * Functions
- ***/
+/**
+ * Optional GL output
+ */
 
+#ifdef GRAPHICS
+
+#define MAXFPS 60
+static gl2d_t gl2d;
+
+static void draw(gl2d_t gl2d, float t_now, float t_min, float t_max, int grid[L][L])
+{
+	static double last_frame = 0.0;
+
+	double current_time = omp_get_wtime();
+	if (current_time - last_frame < 1.0 / MAXFPS) {
+		return;
+	}
+	last_frame = current_time;
+
+	float row[L * 3];
+	float color[3];
+	colormap_rgbf(COLORMAP_VIRIDIS, t_now, t_min, t_max, &color[0], &color[1], &color[2]);
+	for (int i = 0; i < L; ++i) {
+		memset(row, 0, sizeof(row));
+		for (int j = 0; j < L; ++j) {
+			if (grid[i][j] > 0) {
+				row[j * 3    ] = color[0];
+				row[j * 3 + 1] = color[1];
+				row[j * 3 + 2] = color[2];
+			}
+		}
+		gl2d_draw_rgbf(gl2d, 0, i, L, 1, row);
+	}
+	gl2d_display(gl2d);
+}
+#endif /* GRAPHICS */
+
+
+/**
+ * Functions
+ */
 static
 void
 update(const float temp,
@@ -99,6 +141,10 @@ update(const float temp,
 			}
 		}
 	}
+
+#ifdef GRAPHICS
+	draw(gl2d, temp, TEMP_MIN, TEMP_MAX, grid);
+#endif
 }
 
 
@@ -213,6 +259,10 @@ main(void)
 	// configure RNG
 	srand(SEED);
 
+#ifdef GRAPHICS
+	gl2d = gl2d_init("tiny_ising", L, L);
+#endif
+
 	// start timer
 	double start = omp_get_wtime();
 
@@ -237,6 +287,10 @@ main(void)
 			stat[i].m2,
 			stat[i].m4);
 	}
+
+#ifdef GRAPHICS
+	gl2d_destroy(gl2d);
+#endif
 
 	return 0;
 }

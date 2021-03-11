@@ -5,7 +5,7 @@
  * Ezequiel E. Ferrero, Juan Pablo De Francesco, Nicolás Wolovick,
  * Sergio A. Cannas
  * http://arxiv.org/abs/1101.0876
- * 
+ *
  * Debugging: Ezequiel Ferrero
  */
 
@@ -17,39 +17,34 @@
 #include <limits.h> // UINT_MAX
 #include <omp.h> // omp_get_wtime()
 
-#ifndef L
-#define L 128 // linear system size
-#endif
 
-#ifndef SAMPLES
-#define SAMPLES 1 // number of samples
+#ifndef L
+#define L 384 // linear system size
 #endif
 
 #ifndef TEMP_MIN
-#define TEMP_MIN 0.9f // minimum temperature
+#define TEMP_MIN 1.5f // minimum temperature
 #endif
 
 #ifndef TEMP_MAX
-#define TEMP_MAX 1.35f // maximum temperature
+#define TEMP_MAX 3.0f // maximum temperature
 #endif
 
 #ifndef DELTA_TEMP
-#define DELTA_TEMP 0.05f // temperature step
+#define DELTA_TEMP 0.01f // temperature step
 #endif
 
 #ifndef TRAN
-#define TRAN 20 // equilibration time
+#define TRAN 5 // equilibration time
 #endif
 
 #ifndef TMAX
-#define TMAX 800 // measurement time
+#define TMAX 25 // measurement time
 #endif
 
 #ifndef DELTA_T
 #define DELTA_T 5 // sampling period for energy and magnetization
 #endif
-
-// Functions
 
 // Internal definitions and functions
 // out vector size, it is +1 since we reach TEMP_
@@ -79,7 +74,7 @@ void
 update(const float temp,
        int grid[L][L]) {
 
-	// typewritter update
+	// typewriter update
 	for (unsigned int i=0; i<L; ++i) {
 		for (unsigned int j=0; j<L; ++j) {
 
@@ -115,8 +110,6 @@ update(const float temp,
 
 static
 double
-//calculate(int grid[L][L],
-//	  unsigned int *M_max) {
 calculate(int grid[L][L],
 	  int *M_max) {
 
@@ -137,7 +130,6 @@ calculate(int grid[L][L],
 			*M_max += spin;
 		}
 	}
-
 	return -((double)E/2.0);
 }
 
@@ -192,22 +184,16 @@ cycle(int grid[L][L],
 		stats[index].m += m/measurements;
 		stats[index].m2 += m2/measurements;
 		stats[index].m4 += m4/measurements;
+		++index;
 	}
 }
 
-
-static
-void
-sample(int grid[L][L], struct statpoint stat[]) {
-	// clear the grid
+static void init() {
 	for (unsigned int i=0; i<L; ++i) {
 		for (unsigned int j=0; j<L; ++j) {
-			grid[i][j] = 1;
+			grid[i][j] = (rand()/(float)RAND_MAX) < 0.5f ? -1 : 1;
 		}
 	}
-
-	// temperature increasing cycle
-	cycle(grid, TEMP_MIN, TEMP_MAX, DELTA_TEMP, DELTA_T, stat);
 }
 
 
@@ -221,8 +207,6 @@ main(void)
 			stat[i].e = stat[i].e2 = stat[i].e4 = 0.0;
 			stat[i].m = stat[i].m2 = stat[i].m4 = 0.0;
 	}
-	double start = 0.0;
-	double elapsed = 0.0;
 
 	// parameter checking
 	assert(TEMP_MIN<=TEMP_MAX);
@@ -232,7 +216,6 @@ main(void)
 
 	// print header
 	printf("# L: %i\n", L);
-	printf("# Number of Samples: %i\n", SAMPLES);
 	printf("# Minimum Temperature: %f\n", TEMP_MIN);
 	printf("# Maximum Temperature: %f\n", TEMP_MAX);
 	printf("# Temperature Step: %.12f\n", DELTA_TEMP);
@@ -245,26 +228,28 @@ main(void)
 	srand(SEED);
 
 	// start timer
-	start = omp_get_wtime();
+	double start = omp_get_wtime();
 
-	for (unsigned int i=0; i<SAMPLES; ++i) {
-		sample(grid, stat);
-	}
+	// clear the grid
+	init();
+
+	// temperature increasing cycle
+	cycle(grid, TEMP_MIN, TEMP_MAX, DELTA_TEMP, DELTA_T, stat);
 
 	// stop timer
-	elapsed = omp_get_wtime()-start;
+	double elapsed = omp_get_wtime()-start;
 	printf("# Total Simulation Time (sec): %lf\n", elapsed);
 
 	printf("# Temp\tE\tE^2\tE^4\tM\tM^2\tM^4\n");
 	for (unsigned int i=0; i<NPOINTS; ++i) {
 		printf ("%lf\t%.10lf\t%.10lf\t%.10lf\t%.10lf\t%.10lf\t%.10lf\n",
 			stat[i].t,
-			stat[i].e/((double)N*SAMPLES),
-			stat[i].e2/((double)N*N*SAMPLES),
-			stat[i].e4/((double)N*N*N*N*SAMPLES),
-			stat[i].m/SAMPLES,
-			stat[i].m2/SAMPLES,
-			stat[i].m4/SAMPLES);
+			stat[i].e/((double)N),
+			stat[i].e2/((double)N*N),
+			stat[i].e4/((double)N*N*N*N),
+			stat[i].m,
+			stat[i].m2,
+			stat[i].m4);
 	}
 
 	return 0;

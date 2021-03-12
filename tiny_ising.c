@@ -9,6 +9,8 @@
  * Debugging: Ezequiel Ferrero
  */
 
+#include "params.h"
+
 #include <stdlib.h> // rand()
 #include <math.h> // expf()
 #include <stdio.h> // printf()
@@ -22,34 +24,6 @@
 #include "colormap.h"
 #include "gl2d.h"
 #endif /* GRAPHICS */
-
-#ifndef L
-#define L 384 // linear system size
-#endif
-
-#ifndef TEMP_MIN
-#define TEMP_MIN 1.5f // minimum temperature
-#endif
-
-#ifndef TEMP_MAX
-#define TEMP_MAX 3.0f // maximum temperature
-#endif
-
-#ifndef DELTA_TEMP
-#define DELTA_TEMP 0.01f // temperature step
-#endif
-
-#ifndef TRAN
-#define TRAN 5 // equilibration time
-#endif
-
-#ifndef TMAX
-#define TMAX 25 // measurement time
-#endif
-
-#ifndef DELTA_T
-#define DELTA_T 5 // sampling period for energy and magnetization
-#endif
 
 // Internal definitions and functions
 // out vector size, it is +1 since we reach TEMP_

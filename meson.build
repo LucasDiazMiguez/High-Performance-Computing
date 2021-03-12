@@ -1,4 +1,4 @@
-project('tiny_ising', 'c')
+project('tiny_ising', 'c', default_options: [ 'warning_level=2' ])
 
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m')
@@ -14,6 +14,5 @@ glfw_dep = cc.find_library('glfw', required: false)
 
 demo = executable('demo',
     [ 'demo.c', 'ising.c' ],
-    c_args: '-DGRAPHICS',
     dependencies: [ m_dep, gomp_dep, glfw_dep, gl_dep ]
 )

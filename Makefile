@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-std=gnu99 -Wall -Wextra
-LDFLAGS=-lm -lgomp
+LDFLAGS=-lm
 GL_LDFLAGS=-lGL -lglfw
 
 # Files

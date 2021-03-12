@@ -11,11 +11,11 @@
 
 #include "ising.h"
 #include "params.h"
+#include "wtime.h"
 
 #include <assert.h>
 #include <limits.h> // UINT_MAX
 #include <math.h> // expf()
-#include <omp.h> // omp_get_wtime()
 #include <stdio.h> // printf()
 #include <stdlib.h> // rand()
 #include <time.h> // time()
@@ -127,7 +127,7 @@ int main(void)
     srand(SEED);
 
     // start timer
-    double start = omp_get_wtime();
+    double start = wtime();
 
     // clear the grid
 	int grid[L][L] = { { 0 } };
@@ -137,7 +137,7 @@ int main(void)
     cycle(grid, TEMP_MIN, TEMP_MAX, DELTA_TEMP, DELTA_T, stat);
 
     // stop timer
-    double elapsed = omp_get_wtime() - start;
+    double elapsed = wtime() - start;
     printf("# Total Simulation Time (sec): %lf\n", elapsed);
 
     printf("# Temp\tE\tE^2\tE^4\tM\tM^2\tM^4\n");

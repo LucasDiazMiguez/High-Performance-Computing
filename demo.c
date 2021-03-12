@@ -26,8 +26,6 @@
 #define N (L * L) // system size
 #define SEED (time(NULL)) // random seed
 
-// The grid: global array
-static int grid[L][L] = { { 0 } };
 
 /**
  * GL output
@@ -59,6 +57,7 @@ static void draw(gl2d_t gl2d, float t_now, float t_min, float t_max, int grid[L]
     gl2d_display(gl2d);
 }
 
+
 static void cycle(gl2d_t gl2d, const double min, const double max, const double step, int grid[L][L])
 {
     assert((0 < step && min <= max) || (step < 0 && max <= min));
@@ -73,6 +72,7 @@ static void cycle(gl2d_t gl2d, const double min, const double max, const double 
     }
 }
 
+
 static void init(int grid[L][L])
 {
     for (unsigned int i = 0; i < L; ++i) {
@@ -81,6 +81,7 @@ static void init(int grid[L][L])
         }
     }
 }
+
 
 int main(void)
 {
@@ -107,6 +108,7 @@ int main(void)
     double start = omp_get_wtime();
 
     // clear the grid
+	int grid[L][L] = { { 0 } };
     init(grid);
 
     // temperature increasing cycle

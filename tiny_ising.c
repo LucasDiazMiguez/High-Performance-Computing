@@ -49,7 +49,6 @@ static void cycle(int grid[L][L],
 
     unsigned int index = 0;
     for (double temp = min; modifier * temp <= modifier * max; temp += step) {
-        printf("Temp: %f\n", temp);
 
         // equilibrium phase
         for (unsigned int j = 0; j < TRAN; ++j) {

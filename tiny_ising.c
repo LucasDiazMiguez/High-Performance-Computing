@@ -39,9 +39,9 @@ struct statpoint {
 
 
 static void cycle(int grid[L][L],
-      const double min, const double max,
-      const double step, const unsigned int calc_step,
-      struct statpoint stats[])
+                  const double min, const double max,
+                  const double step, const unsigned int calc_step,
+                  struct statpoint stats[])
 {
 
     assert((0 < step && min <= max) || (step < 0 && max <= min));
@@ -130,7 +130,7 @@ int main(void)
     double start = wtime();
 
     // clear the grid
-	int grid[L][L] = { { 0 } };
+    int grid[L][L] = { { 0 } };
     init(grid);
 
     // temperature increasing cycle

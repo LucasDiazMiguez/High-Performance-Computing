@@ -5,15 +5,15 @@
 #endif
 
 #ifndef TEMP_MIN
-#define TEMP_MIN 1.5f // minimum temperature
+#define TEMP_MIN 1.5 // minimum temperature
 #endif
 
 #ifndef TEMP_MAX
-#define TEMP_MAX 3.0f // maximum temperature
+#define TEMP_MAX 3.0 // maximum temperature
 #endif
 
 #ifndef DELTA_TEMP
-#define DELTA_TEMP 0.01f // temperature step
+#define DELTA_TEMP 0.01 // temperature step
 #endif
 
 #ifndef TRAN

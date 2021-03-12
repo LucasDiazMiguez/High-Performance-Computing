@@ -5,7 +5,7 @@ m_dep = cc.find_library('m')
 gomp_dep = cc.find_library('gomp')
 
 tiny_ising = executable('tiny_ising',
-    'tiny_ising.c',
+    [ 'tiny_ising.c', 'ising.c' ],
     dependencies: [ m_dep, gomp_dep ]
 )
 
@@ -13,7 +13,7 @@ gl_dep = cc.find_library('GL', required: false)
 glfw_dep = cc.find_library('glfw', required: false)
 
 demo = executable('demo',
-    'tiny_ising.c',
+    [ 'demo.c', 'ising.c' ],
     c_args: '-DGRAPHICS',
     dependencies: [ m_dep, gomp_dep, glfw_dep, gl_dep ]
 )

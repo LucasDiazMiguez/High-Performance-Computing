@@ -13,10 +13,10 @@
 #include "gl2d.h"
 #include "ising.h"
 #include "params.h"
+#include "wtime.h"
 
 #include <assert.h>
 #include <limits.h> // UINT_MAX
-#include <omp.h> // omp_get_wtime()
 #include <stdio.h> // printf()
 #include <stdlib.h> // rand()
 #include <string.h>
@@ -34,7 +34,7 @@ static void draw(gl2d_t gl2d, float t_now, float t_min, float t_max, int grid[L]
 {
     static double last_frame = 0.0;
 
-    double current_time = omp_get_wtime();
+    double current_time = wtime();
     if (current_time - last_frame < 1.0 / MAXFPS) {
         return;
     }
@@ -105,7 +105,7 @@ int main(void)
     gl2d_t gl2d = gl2d_init("tiny_ising", L, L);
 
     // start timer
-    double start = omp_get_wtime();
+    double start = wtime();
 
     // clear the grid
 	int grid[L][L] = { { 0 } };
@@ -115,7 +115,7 @@ int main(void)
     cycle(gl2d, TEMP_MIN, TEMP_MAX, DELTA_TEMP, grid);
 
     // stop timer
-    double elapsed = omp_get_wtime() - start;
+    double elapsed = wtime() - start;
     printf("# Total Simulation Time (sec): %lf\n", elapsed);
 
     gl2d_destroy(gl2d);

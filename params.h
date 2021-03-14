@@ -4,16 +4,16 @@
 #define L 384 // linear system size
 #endif
 
-#ifndef TEMP_MIN
-#define TEMP_MIN 1.5 // minimum temperature
+#ifndef TEMP_INITIAL
+#define TEMP_INITIAL 1.5 // initial temperature
 #endif
 
-#ifndef TEMP_MAX
-#define TEMP_MAX 3.0 // maximum temperature
+#ifndef TEMP_FINAL
+#define TEMP_FINAL 3.0 // final temperature
 #endif
 
-#ifndef DELTA_TEMP
-#define DELTA_TEMP 0.01 // temperature step
+#ifndef TEMP_DELTA
+#define TEMP_DELTA 0.01 // temperature step
 #endif
 
 #ifndef TRAN

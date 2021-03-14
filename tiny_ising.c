@@ -22,7 +22,7 @@
 
 // Internal definitions and functions
 // out vector size, it is +1 since we reach TEMP_
-#define NPOINTS (1 + (int)((TEMP_MAX - TEMP_MIN) / DELTA_TEMP))
+#define NPOINTS (1 + (int)((TEMP_FINAL - TEMP_INITIAL) / TEMP_DELTA))
 #define N (L * L) // system size
 #define SEED (time(NULL)) // random seed
 
@@ -99,6 +99,12 @@ static void init(int grid[L][L])
 
 int main(void)
 {
+    // parameter checking
+    static_assert(TEMP_DELTA != 0, "Invalid temperature step");
+    static_assert(((TEMP_DELTA > 0) && (TEMP_INITIAL <= TEMP_FINAL)) || ((TEMP_DELTA < 0) && (TEMP_INITIAL >= TEMP_FINAL)), "Invalid temperature range+step");
+    static_assert(TMAX % DELTA_T == 0, "Measurements must be equidistant"); // take equidistant calculate()
+    static_assert((L * L / 2) * 4ULL < UINT_MAX, "L too large for uint indices"); // max energy, that is all spins are the same, fits into a ulong
+
     // the stats
     struct statpoint stat[NPOINTS];
     for (unsigned int i = 0; i < NPOINTS; ++i) {
@@ -107,17 +113,11 @@ int main(void)
         stat[i].m = stat[i].m2 = stat[i].m4 = 0.0;
     }
 
-    // parameter checking
-    assert(TEMP_MIN <= TEMP_MAX);
-    assert(0 < DELTA_T && DELTA_T < TMAX); // at least one calculate()
-    assert(TMAX % DELTA_T == 0); // take equidistant calculate()
-    assert((L * L / 2) * 4L < UINT_MAX); // max energy, that is all spins are the same, fits into a ulong
-
     // print header
     printf("# L: %i\n", L);
-    printf("# Minimum Temperature: %f\n", TEMP_MIN);
-    printf("# Maximum Temperature: %f\n", TEMP_MAX);
-    printf("# Temperature Step: %.12f\n", DELTA_TEMP);
+    printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
+    printf("# Maximum Temperature: %f\n", TEMP_FINAL);
+    printf("# Temperature Step: %.12f\n", TEMP_DELTA);
     printf("# Equilibration Time: %i\n", TRAN);
     printf("# Measurement Time: %i\n", TMAX);
     printf("# Data Acquiring Step: %i\n", DELTA_T);
@@ -134,7 +134,7 @@ int main(void)
     init(grid);
 
     // temperature increasing cycle
-    cycle(grid, TEMP_MIN, TEMP_MAX, DELTA_TEMP, DELTA_T, stat);
+    cycle(grid, TEMP_INITIAL, TEMP_FINAL, TEMP_DELTA, DELTA_T, stat);
 
     // stop timer
     double elapsed = wtime() - start;

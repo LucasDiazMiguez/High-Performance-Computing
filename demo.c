@@ -58,16 +58,16 @@ static void draw(gl2d_t gl2d, float t_now, float t_min, float t_max, int grid[L]
 }
 
 
-static void cycle(gl2d_t gl2d, const double min, const double max, const double step, int grid[L][L])
+static void cycle(gl2d_t gl2d, const double initial, const double final, const double step, int grid[L][L])
 {
-    assert((0 < step && min <= max) || (step < 0 && max <= min));
+    assert((0 < step && initial <= final) || (step < 0 && final <= initial));
     int modifier = (0 < step) ? 1 : -1;
 
-    for (double temp = min; modifier * temp <= modifier * max; temp += step) {
+    for (double temp = initial; modifier * temp <= modifier * final; temp += step) {
         printf("Temp: %f\n", temp);
         for (unsigned int j = 0; j < TRAN + TMAX; ++j) {
             update(temp, grid);
-            draw(gl2d, temp, min < max ? min : max, min < max ? max : min, grid);
+            draw(gl2d, temp, initial < final ? initial : final, initial < final ? final : initial, grid);
         }
     }
 }
@@ -86,16 +86,16 @@ static void init(int grid[L][L])
 int main(void)
 {
     // parameter checking
-    assert(TEMP_MIN <= TEMP_MAX);
-    assert(0 < DELTA_T && DELTA_T < TMAX); // at least one calculate()
-    assert(TMAX % DELTA_T == 0); // take equidistant calculate()
-    assert((L * L / 2) * 4L < UINT_MAX); // max energy, that is all spins are the same, fits into a ulong
+    static_assert(TEMP_DELTA != 0, "Invalid temperature step");
+    static_assert(((TEMP_DELTA > 0) && (TEMP_INITIAL <= TEMP_FINAL)) || ((TEMP_DELTA < 0) && (TEMP_INITIAL >= TEMP_FINAL)), "Invalid temperature range+step");
+    static_assert(TRAN + TMAX > 0, "Invalid times");
+    static_assert((L * L / 2) * 4ULL < UINT_MAX, "L too large for uint indices"); // max energy, that is all spins are the same, fits into a ulong
 
     // print header
     printf("# L: %i\n", L);
-    printf("# Minimum Temperature: %f\n", TEMP_MIN);
-    printf("# Maximum Temperature: %f\n", TEMP_MAX);
-    printf("# Temperature Step: %.12f\n", DELTA_TEMP);
+    printf("# Minimum Temperature: %f\n", TEMP_INITIAL);
+    printf("# Maximum Temperature: %f\n", TEMP_FINAL);
+    printf("# Temperature Step: %.12f\n", TEMP_DELTA);
     printf("# Equilibration Time: %i\n", TRAN);
     printf("# Measurement Time: %i\n", TMAX);
 
@@ -112,7 +112,7 @@ int main(void)
     init(grid);
 
     // temperature increasing cycle
-    cycle(gl2d, TEMP_MIN, TEMP_MAX, DELTA_TEMP, grid);
+    cycle(gl2d, TEMP_INITIAL, TEMP_FINAL, TEMP_DELTA, grid);
 
     // stop timer
     double elapsed = wtime() - start;

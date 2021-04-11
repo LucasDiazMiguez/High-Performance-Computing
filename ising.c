@@ -9,7 +9,7 @@ void update(const float temp, int grid[L][L])
     // typewriter update
     for (unsigned int i = 0; i < L; ++i) {
         for (unsigned int j = 0; j < L; ++j) {
-            int spin_old = grid[i][j];
+            int spin_old = grid[i][j];//grid[i][j] has a value of 1 or -1
             int spin_new = (-1) * spin_old;
 
             // computing h_before

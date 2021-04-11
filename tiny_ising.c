@@ -43,7 +43,7 @@ static void cycle(int grid[L][L],
                   const double step, const unsigned int calc_step,
                   struct statpoint stats[])
 {
-
+    // If an assertion fails, the assert() macro arranges to print a diagnostic message describing the condition that should have been true but was not, and then it kills the program. In C, using assert() looks this: 
     assert((0 < step && min <= max) || (step < 0 && max <= min));
     int modifier = (0 < step) ? 1 : -1;
 
@@ -100,6 +100,8 @@ static void init(int grid[L][L])
 int main(void)
 {
     // parameter checking
+    //  Static_assert is a function that contains a bool operation and a message. If the boolean returns true, nothing happens.
+    // but if it returns false, it throws an compile-time-error.static_assert
     static_assert(TEMP_DELTA != 0, "Invalid temperature step");
     static_assert(((TEMP_DELTA > 0) && (TEMP_INITIAL <= TEMP_FINAL)) || ((TEMP_DELTA < 0) && (TEMP_INITIAL >= TEMP_FINAL)), "Invalid temperature range+step");
     static_assert(TMAX % DELTA_T == 0, "Measurements must be equidistant"); // take equidistant calculate()
@@ -107,6 +109,7 @@ int main(void)
 
     // the stats
     struct statpoint stat[NPOINTS];
+    printf("Npoints = %d \n",NPOINTS);
     for (unsigned int i = 0; i < NPOINTS; ++i) {
         stat[i].t = 0.0;
         stat[i].e = stat[i].e2 = stat[i].e4 = 0.0;
@@ -131,7 +134,7 @@ int main(void)
 
     // clear the grid
     int grid[L][L] = { { 0 } };
-    init(grid);
+    init(grid);//initializes a matrix with LxL elements
 
     // temperature increasing cycle
     cycle(grid, TEMP_INITIAL, TEMP_FINAL, TEMP_DELTA, DELTA_T, stat);

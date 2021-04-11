@@ -17,12 +17,16 @@ void update(const float temp, int grid[L][L])
             int spin_neigh_e = grid[i][(j + 1) % L];
             int spin_neigh_w = grid[i][(j + L - 1) % L];
             int spin_neigh_s = grid[(i + 1) % L][j];
+            //que vendria a ser la h?
             int h_before = -(spin_old * spin_neigh_n) - (spin_old * spin_neigh_e) - (spin_old * spin_neigh_w) - (spin_old * spin_neigh_s);
+            //parece la energia del spin. (ssubi por subj)
 
             // h after taking new spin
             int h_after = -(spin_new * spin_neigh_n) - (spin_new * spin_neigh_e) - (spin_new * spin_neigh_w) - (spin_new * spin_neigh_s);
 
             int delta_E = h_after - h_before;
+
+            //aca le cambia el valor del spin segun alguna condicion
             float p = rand() / (float)RAND_MAX;
             if (delta_E <= 0 || p <= expf(-delta_E / temp)) {
                 grid[i][j] = spin_new;

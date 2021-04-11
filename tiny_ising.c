@@ -48,24 +48,41 @@ static void cycle(int grid[L][L],
     int modifier = (0 < step) ? 1 : -1;
 
     unsigned int index = 0;
-    for (double temp = min; modifier * temp <= modifier * max; temp += step) {
+    for (double temp = min; modifier * temp <= modifier * max; temp += step) {//en este bucle se va aumentando la temperatura en tamano step!
 
         // equilibrium phase
         for (unsigned int j = 0; j < TRAN; ++j) {
-            update(temp, grid);
+            update(temp, grid);//ve si le cambia los valores a los pines segun alguna probabilidad
         }
 
         // measurement phase
         unsigned int measurements = 0;
         double e = 0.0, e2 = 0.0, e4 = 0.0, m = 0.0, m2 = 0.0, m4 = 0.0;
-        for (unsigned int j = 0; j < TMAX; ++j) {
-            update(temp, grid);
+        for (unsigned int j = 0; j < TMAX; ++j) { //TMAX Measurment time? DELTA_T?
+            update(temp, grid);//ve si le cambia los valores a los pines 
             if (j % calc_step == 0) {
                 double energy = 0.0, mag = 0.0;
                 int M_max = 0;
-                energy = calculate(grid, &M_max);
+                energy = calculate(grid, &M_max);//calcula la energia
+                // double calculate(int grid[L][L], int* M_max)
+                // {
+                //     int E = 0;
+                //     for (unsigned int i = 0; i < L; ++i) {
+                //         for (unsigned int j = 0; j < L; ++j) {
+                //             int spin = grid[i][j];
+                //             int spin_neigh_n = grid[(i + 1) % L][j];
+                //             int spin_neigh_e = grid[i][(j + 1) % L];
+                //             int spin_neigh_w = grid[i][(j + L - 1) % L];
+                //             int spin_neigh_s = grid[(i + L - 1) % L][j];
+
+                //             E += (spin * spin_neigh_n) + (spin * spin_neigh_e) + (spin * spin_neigh_w) + (spin * spin_neigh_s);
+                //             *M_max += spin;
+                //         }
+                //     }
+                //     return -((double)E / 2.0);
+                // }
                 mag = abs(M_max) / (float)N;
-                e += energy;
+                e += energy;// esta e va  acumulando los valores de cada energy de los spins
                 e2 += energy * energy;
                 e4 += energy * energy * energy * energy;
                 m += mag;
@@ -75,8 +92,9 @@ static void cycle(int grid[L][L],
             }
         }
         assert(index < NPOINTS);
+        // If an assertion fails, the assert() macro arranges to print a diagnostic message describing the condition that should have been true but was not, and then it kills the program. In C, using assert() looks this: 
         stats[index].t = temp;
-        stats[index].e += e / measurements;
+        stats[index].e += e / measurements;// el measurements esta dentro del if
         stats[index].e2 += e2 / measurements;
         stats[index].e4 += e4 / measurements;
         stats[index].m += m / measurements;
@@ -138,7 +156,7 @@ int main(void)
 
     // temperature increasing cycle
     cycle(grid, TEMP_INITIAL, TEMP_FINAL, TEMP_DELTA, DELTA_T, stat);
-
+    //delta_T ??
     // stop timer
     double elapsed = wtime() - start;
     printf("# Total Simulation Time (sec): %lf\n", elapsed);

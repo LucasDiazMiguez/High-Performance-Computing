@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-std=c11 -Wall -Wextra
+EXTRA_CFLAGS=
+CFLAGS=-std=c11 -Wall -Wextra ${EXTRA_CFLAGS}
 LDFLAGS=-lm
 GL_LDFLAGS=-lGL -lglfw
 
